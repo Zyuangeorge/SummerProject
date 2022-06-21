@@ -15,9 +15,10 @@ trace1 = go.Scatter(
 data = [trace1]
 
 layout = dict(title = 'CHAM_26 data',
-            xaxis= dict(title= 'Cycle',ticklen= 5,zeroline= False),
-            yaxis= dict(title= 'AH-OUT',ticklen= 5,zeroline= False) )
+            xaxis= dict(title= 'Cycle'),
+            yaxis= dict(title= 'AH-OUT'),
+            legend= dict(x=1.1,y=1))
 
 fig = dict(data = data, layout = layout)
 
-py.iplot(fig)
+py.iplot(fig, filename='AH-OUT/Cycle')
