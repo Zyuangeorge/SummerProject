@@ -1,15 +1,16 @@
 import pandas as pd
+import plotly.plotly as py
 import plotly.graph_objs as go
 
-df = pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_1_cycles_200.csv')
+df = pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_1_cycles_200.csv', header=8, usecols=['Cycle', 'AH-OUT'])
 
-""" trace1 = go.Scatter(
+trace1 = go.Scatter(
     x = df['Cycle'],
     y = df['AH-OUT'],
     mode = "lines",
     name = "CHAM_26_1_cycles_200",
     marker = dict(color = 'rgba(16,112,2,0.8)'),
-    text = df['TestName'] )
+    text = 'ZW_Cham200cycles_1C.000' )
 
 data = [trace1]
 
@@ -19,4 +20,4 @@ layout = dict(title = 'CHAM_26 data',
 
 fig = dict(data = data, layout = layout)
 
-df.iplot(fig) """
+py.iplot(fig)
