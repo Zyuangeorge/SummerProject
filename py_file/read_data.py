@@ -1,5 +1,5 @@
 import pandas as pd
-import plotly.plotly as py
+import chart_studio.plotly as py
 import plotly.graph_objs as go
 
 df = pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_1_cycles_200.csv', header=8, usecols=['Cycle', 'AH-OUT'])
