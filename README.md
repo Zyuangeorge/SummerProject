@@ -1,2 +1,2 @@
 # SummerProject
- Battery measurements
+About battery...
