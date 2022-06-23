@@ -60,7 +60,7 @@ line2 = go.Scatter(
     y=data2['WH-OUT'], 
     name='CHAM_26_2', 
     marker_color='rgb(0,255,0)', 
-    line = dict(dash='dot'))
+    line = dict(dash='dash'))
 
 fig = go.Figure([line1,line2])
 

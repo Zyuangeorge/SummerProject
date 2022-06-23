@@ -68,7 +68,7 @@ line2 = go.Scatter(
     y=data2['WH-OUT'], 
     name='CHAM_32_2', 
     marker_color='rgb(0,255,0)', 
-    line = dict(dash='dot'))
+    line = dict(dash='dash'))
 
 fig = go.Figure([line1,line2])
 
@@ -76,6 +76,7 @@ fig.update_layout(
     title = 'CHAM_32 Battery 1 and Battery 2 WH-OUT/Cycle Data',
     xaxis_title = 'Cycle',
     yaxis_title = 'WH-OUT(Wh)',
+    yaxis_range = [0,10],
     hovermode='x unified'
 )
 
