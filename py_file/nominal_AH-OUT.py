@@ -191,12 +191,12 @@ dataset_MOLI_42_2['AH-OUT-NOMINAL'] = dataset_MOLI_42_2.apply(
 line_MOLI_42_1 = go.Scatter(x=dataset_MOLI_42_1['Cycle'],
                             y=dataset_MOLI_42_1['AH-OUT-NOMINAL'],
                             name='MOLI_42_1',
-                            marker_color='rgb(255,255,0)')
+                            marker_color='rgb(255,0,255)')
 
 line_MOLI_42_2 = go.Scatter(x=dataset_MOLI_42_2['Cycle'],
                             y=dataset_MOLI_42_2['AH-OUT-NOMINAL'],
                             name='MOLI_42_2',
-                            marker_color='rgb(255,255,0)',
+                            marker_color='rgb(255,0,255)',
                             line=dict(dash='dash'))
 
 # ====================Plot codes====================
