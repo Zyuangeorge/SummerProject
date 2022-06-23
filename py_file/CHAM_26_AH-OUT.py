@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.graph_objs as go
 
+# read csv files
 battery1_1=pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_1_cycles_200.csv', header=8)
 battery1_2=pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_1_cycles_400.csv', header=8)
 battery1_3=pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_1_cycles_600.csv', header=8)
@@ -21,6 +22,7 @@ battery2_9=pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_2_cycles_1800.csv', header=8)
 battery2_10=pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_2_cycles_2000.csv', header=8)
 battery2_11=pd.read_csv('Cycle_Data/CHAM_26/CHAM_26_2_cycles_2200.csv', header=8)
 
+# Merge the battery data
 data1 = pd.concat(objs=[battery1_1,
                         battery1_2,
                         battery1_3,
@@ -43,12 +45,14 @@ data2 = pd.concat(objs=[battery2_1,
                         battery2_11],
                         axis=0,join='outer',ignore_index=True)
 
+# Reset the cycle data
 for data in range(len(data1)):
     data1.loc[data,'Cycle'] = data
 
 for data in range(len(data2)):
     data2.loc[data,'Cycle'] = data
 
+# Set the curves
 line1 = go.Scatter(
     x=data1['Cycle'], 
     y=data1['AH-OUT'], 
@@ -62,6 +66,7 @@ line2 = go.Scatter(
     marker_color='rgb(0,255,0)', 
     line = dict(dash='dash'))
 
+# Plot the curves
 fig = go.Figure([line1,line2])
 
 fig.update_layout(
