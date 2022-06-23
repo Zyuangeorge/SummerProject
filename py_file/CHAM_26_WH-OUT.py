@@ -67,7 +67,8 @@ fig = go.Figure([line1,line2])
 fig.update_layout(
     title = 'CHAM_26 Battery 1 and Battery 2 WH-OUT/Cycle Data',
     xaxis_title = 'Cycle',
-    yaxis_title = 'WH-OUT(Wh)'
+    yaxis_title = 'WH-OUT(Wh)',
+    hovermode='x unified'
 )
 
 fig.show()

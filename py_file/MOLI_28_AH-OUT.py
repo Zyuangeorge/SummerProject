@@ -8,6 +8,10 @@ battery1_4=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_1_cycles_800.csv', header=8)
 battery1_5=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_1_cycles_1000.csv', header=8)
 battery1_6=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_1_cycles_1200.csv', header=8)
 battery1_7=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_1_cycles_1400.csv', header=8)
+battery1_8=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_1_cycles_1600.csv', header=8)
+battery1_9=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_1_cycles_1800.csv', header=8)
+battery1_10=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_1_cycles_2000.csv', header=8)
+battery1_11=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_1_cycles_2200.csv', header=8)
 
 battery2_1=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_2_cycles_200.csv', header=8)
 battery2_2=pd.read_csv('Cycle_Data/MOLI_28/MOLI_28_2_cycles_400.csv', header=8)
@@ -27,7 +31,11 @@ data1 = pd.concat(objs=[battery1_1,
                         battery1_4,
                         battery1_5,
                         battery1_6,
-                        battery1_7],
+                        battery1_7,
+                        battery1_8,
+                        battery1_9,
+                        battery1_10,
+                        battery1_11],
                         axis=0,join='outer', ignore_index=True)
 
 data2 = pd.concat(objs=[battery2_1,
@@ -67,7 +75,8 @@ fig = go.Figure([line1,line2])
 fig.update_layout(
     title = 'MOLI_28 Battery 1 and Battery 2 AH-OUT/Cycle Data',
     xaxis_title = 'Cycle',
-    yaxis_title = 'AH-OUT(Ah)'
+    yaxis_title = 'AH-OUT(Ah)',
+    hovermode='x unified'
 )
 
 fig.show()
