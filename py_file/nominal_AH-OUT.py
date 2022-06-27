@@ -1,6 +1,7 @@
 import os
 import functools
 import operator
+import random
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -15,8 +16,10 @@ def create_lines(file_path):
     
     line_list = []
     
+    color = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+    
     line_name = file_path[11:18]
-
+    
     # Set the file list of the folder
     folder_name = file_path
 
@@ -56,43 +59,53 @@ def create_lines(file_path):
     # Create a new series called AH-OUT-NOMINAL
     dataset_battery1['AH-OUT-NOMINAL'] = dataset_battery1.apply(
         lambda x: x['AH-OUT'] / dataset_battery1.loc[0, 'AH-OUT'], axis=1)
-
+    
     dataset_battery2['AH-OUT-NOMINAL'] = dataset_battery2.apply(
         lambda x: x['AH-OUT'] / dataset_battery2.loc[0, 'AH-OUT'], axis=1)
-
+    
+    dataset_battery1['TYPE'] = line_name
+    dataset_battery2['TYPE'] = line_name
+    
     # Plot the curves
     line_battery1 = go.Scatter(x=dataset_battery1['Cycle'],
                                 y=dataset_battery1['AH-OUT-NOMINAL'],
                                 name= line_name + '_1',
-                                marker_color='rgb(255,0,0)')
+                                marker_color = color)
 
     line_battery2 = go.Scatter(x=dataset_battery2['Cycle'],
                                 y=dataset_battery2['AH-OUT-NOMINAL'],
                                 name= line_name + '_2',
-                                marker_color='rgb(255,0,0)',
+                                marker_color = color,
                                 line=dict(dash='dash'))
-
+    
     line_list = [line_battery1, line_battery2]
     
     return line_list
 
 def plot_curves(root_path):
+    '''Plot curves based on the root folder'''
     folder_list = []
     line_list = []
     lines = []
     
+    # Create folder list
     folder_list = os.listdir(root_path)
 
-    # folder_list.sort(key=lambda k: k['Date'][0])
+    # Sort the folder list based on the folder names
+    folder_list.sort()
 
+    # Create line list
     for folder in folder_list:
         folder_name = root_path + folder + '/'
         line_list.append(create_lines(folder_name))
 
+    # Transfer nested line list to flat line list
     lines = functools.reduce(operator.concat, line_list)
 
+    # Plot the lines
     fig = go.Figure(lines)
 
+    # Set the graph layout
     fig.update_layout(
         title='Battery AH-OUT-NOMINAL/Cycle Data',
         xaxis_title='Cycle',
@@ -101,8 +114,8 @@ def plot_curves(root_path):
     )
 
     return fig
-    
-# ====================Plot codes====================
+
+# ====================MAIN====================
 if __name__ == "__main__":
 
     fig = plot_curves('Cycle_Data/')
