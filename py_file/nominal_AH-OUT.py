@@ -1,226 +1,123 @@
 import os
+import functools
+import operator
+import random
 import pandas as pd
 import plotly.graph_objects as go
 
-# ====================CHAM_26====================
-# Set the path and path list of the folder
-CHAM_26_path = 'Cycle_Data/CHAM_26/'
-files = os.listdir(CHAM_26_path)
+def create_lines(file_path):
+    '''Plot the nominal curve, file structure should be folder-scv'''
+    # File lists
+    battery1_file_list = []
+    battery2_file_list = []
 
-# Filter out other files
-CHAM_26_1_files = list(
-    filter(lambda x: (x[0:9] == 'CHAM_26_1' and x[-4:] == '.csv'), files))
-CHAM_26_2_files = list(
-    filter(lambda x: (x[0:9] == 'CHAM_26_2' and x[-4:] == '.csv'), files))
+    battery1_file_sorted = []
+    battery2_file_sorted = []
+    
+    line_list = []
+    
+    color = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+    
+    line_name = file_path[11:18]
+    
+    # Set the file list of the folder
+    folder_name = file_path
 
-# Read the file to file list and sort the list based on the time information
-CHAM_26_1_list = []
-for file in CHAM_26_1_files:
-    tmp = pd.read_csv(CHAM_26_path + file, header=8)
-    CHAM_26_1_list.append(tmp)
-CHAM_26_1_list = sorted(CHAM_26_1_list, key=lambda k: k['Date'][0])
+    file_list = os.listdir(file_path)
 
-CHAM_26_2_list = []
-for file in CHAM_26_2_files:
-    tmp = pd.read_csv(CHAM_26_path + file, header=8)
-    CHAM_26_2_list.append(tmp)
-CHAM_26_2_list = sorted(CHAM_26_2_list, key=lambda k: k['Date'][0])
+    # Filter out other files
+    battery1_file_list = list(
+        filter(lambda x: (x[7:10] == '_1_' and x[-4:] == '.csv'), file_list))
+    battery2_file_list = list(
+        filter(lambda x: (x[7:10] == '_2_' and x[-4:] == '.csv'), file_list))
+    
+    # Read the file in the file list and sort the list based on the time information
+    for file in battery1_file_list:
+        tmp = pd.read_csv(folder_name + file, header=8)
+        battery1_file_sorted.append(tmp)
 
-# Merge the data in the list to one dataframe variable and create a new series called AH-OUT-NOMINAL
-dataset_CHAM_26_1 = pd.concat(
-    CHAM_26_1_list, axis=0, join='outer', ignore_index=True)
-for data in range(len(dataset_CHAM_26_1)):
-    dataset_CHAM_26_1.loc[data, 'Cycle'] = data
+    for file in battery2_file_list:
+        tmp = pd.read_csv(folder_name + file, header=8)
+        battery2_file_sorted.append(tmp)
 
-dataset_CHAM_26_1['AH-OUT-NOMINAL'] = dataset_CHAM_26_1.apply(
-    lambda x: x['AH-OUT'] / dataset_CHAM_26_1.loc[0, 'AH-OUT'], axis=1)
+    battery1_file_sorted = sorted(battery1_file_sorted, key=lambda k: k['Date'][0])
+    battery2_file_sorted = sorted(battery2_file_sorted, key=lambda k: k['Date'][0])
 
-dataset_CHAM_26_2 = pd.concat(
-    CHAM_26_2_list, axis=0, join='outer', ignore_index=True)
-for data in range(len(dataset_CHAM_26_2)):
-    dataset_CHAM_26_2.loc[data, 'Cycle'] = data
+    # Merge the data in the list to one dataframe variable
+    dataset_battery1 = pd.concat(
+        battery1_file_sorted, axis=0, join='outer', ignore_index=True)
 
-dataset_CHAM_26_2['AH-OUT-NOMINAL'] = dataset_CHAM_26_2.apply(
-    lambda x: x['AH-OUT'] / dataset_CHAM_26_2.loc[0, 'AH-OUT'], axis=1)
+    dataset_battery2 = pd.concat(
+        battery2_file_sorted, axis=0, join='outer', ignore_index=True)
 
-# Plot the curves
-line_CHAM_26_1 = go.Scatter(x=dataset_CHAM_26_1['Cycle'],
-                            y=dataset_CHAM_26_1['AH-OUT-NOMINAL'],
-                            name='CHAM_26_1',
-                            marker_color='rgb(255,0,0)')
+    # Reset the cycle values
+    for data in range(len(dataset_battery1)):
+        dataset_battery1.loc[data, 'Cycle'] = data
+    for data in range(len(dataset_battery2)):
+        dataset_battery2.loc[data, 'Cycle'] = data
+    
+    # Create a new series called AH-OUT-NOMINAL
+    dataset_battery1['AH-OUT-NOMINAL'] = dataset_battery1.apply(
+        lambda x: x['AH-OUT'] / dataset_battery1.loc[0, 'AH-OUT'], axis=1)
+    
+    dataset_battery2['AH-OUT-NOMINAL'] = dataset_battery2.apply(
+        lambda x: x['AH-OUT'] / dataset_battery2.loc[0, 'AH-OUT'], axis=1)
+    
+    dataset_battery1['TYPE'] = line_name
+    dataset_battery2['TYPE'] = line_name
+    
+    # Plot the curves
+    line_battery1 = go.Scatter(x=dataset_battery1['Cycle'],
+                                y=dataset_battery1['AH-OUT-NOMINAL'],
+                                name= line_name + '_1',
+                                marker_color = color)
 
-line_CHAM_26_2 = go.Scatter(x=dataset_CHAM_26_2['Cycle'],
-                            y=dataset_CHAM_26_2['AH-OUT-NOMINAL'],
-                            name='CHAM_26_2',
-                            marker_color='rgb(255,0,0)',
-                            line=dict(dash='dash'))
+    line_battery2 = go.Scatter(x=dataset_battery2['Cycle'],
+                                y=dataset_battery2['AH-OUT-NOMINAL'],
+                                name= line_name + '_2',
+                                marker_color = color,
+                                line=dict(dash='dash'))
+    
+    line_list = [line_battery1, line_battery2]
+    
+    return line_list
 
-# ====================CHAM_32====================
-CHAM_32_path = 'Cycle_Data/CHAM_32/'
-files = os.listdir(CHAM_32_path)
+def plot_curves(root_path):
+    '''Plot curves based on the root folder'''
+    folder_list = []
+    line_list = []
+    lines = []
+    
+    # Create folder list
+    folder_list = os.listdir(root_path)
 
-CHAM_32_1_files = list(
-    filter(lambda x: (x[0:9] == 'CHAM_32_1' and x[-4:] == '.csv'), files))
-CHAM_32_2_files = list(
-    filter(lambda x: (x[0:9] == 'CHAM_32_2' and x[-4:] == '.csv'), files))
+    # Sort the folder list based on the folder names
+    folder_list.sort()
 
-CHAM_32_1_list = []
-for file in CHAM_32_1_files:
-    tmp = pd.read_csv(CHAM_32_path + file, header=8)
-    CHAM_32_1_list.append(tmp)
-CHAM_32_1_list = sorted(CHAM_32_1_list, key=lambda k: k['Date'][0])
+    # Create line list
+    for folder in folder_list:
+        folder_name = root_path + folder + '/'
+        line_list.append(create_lines(folder_name))
 
-CHAM_32_2_list = []
-for file in CHAM_32_2_files:
-    tmp = pd.read_csv(CHAM_32_path + file, header=8)
-    CHAM_32_2_list.append(tmp)
-CHAM_32_2_list = sorted(CHAM_32_2_list, key=lambda k: k['Date'][0])
+    # Transfer nested line list to flat line list
+    lines = functools.reduce(operator.concat, line_list)
 
-dataset_CHAM_32_1 = pd.concat(
-    CHAM_32_1_list, axis=0, join='outer', ignore_index=True)
-for data in range(len(dataset_CHAM_32_1)):
-    dataset_CHAM_32_1.loc[data, 'Cycle'] = data
+    # Plot the lines
+    fig = go.Figure(lines)
 
-dataset_CHAM_32_1['AH-OUT-NOMINAL'] = dataset_CHAM_32_1.apply(
-    lambda x: x['AH-OUT'] / dataset_CHAM_32_1.loc[0, 'AH-OUT'], axis=1)
+    # Set the graph layout
+    fig.update_layout(
+        title='Battery AH-OUT-NOMINAL/Cycle Data',
+        xaxis_title='Cycle',
+        yaxis_title='AH-OUT-NOMINAL',
+        hovermode='x'
+    )
 
-dataset_CHAM_32_2 = pd.concat(
-    CHAM_32_2_list, axis=0, join='outer', ignore_index=True)
-for data in range(len(dataset_CHAM_32_2)):
-    dataset_CHAM_32_2.loc[data, 'Cycle'] = data
+    return fig
 
-dataset_CHAM_32_2['AH-OUT-NOMINAL'] = dataset_CHAM_32_2.apply(
-    lambda x: x['AH-OUT'] / dataset_CHAM_32_2.loc[0, 'AH-OUT'], axis=1)
+# ====================MAIN====================
+if __name__ == "__main__":
 
-line_CHAM_32_1 = go.Scatter(x=dataset_CHAM_32_1['Cycle'],
-                            y=dataset_CHAM_32_1['AH-OUT-NOMINAL'],
-                            name='CHAM_32_1',
-                            marker_color='rgb(0,255,0)')
+    fig = plot_curves('Cycle_Data/')
 
-line_CHAM_32_2 = go.Scatter(x=dataset_CHAM_32_2['Cycle'],
-                            y=dataset_CHAM_32_2['AH-OUT-NOMINAL'],
-                            name='CHAM_32_2',
-                            marker_color='rgb(0,255,0)',
-                            line=dict(dash='dash'))
-
-# ====================MOLI_28====================
-MOLI_28_path = 'Cycle_Data/MOLI_28/'
-files = os.listdir(MOLI_28_path)
-
-MOLI_28_1_files = list(
-    filter(lambda x: (x[0:9] == 'MOLI_28_1' and x[-4:] == '.csv'), files))
-MOLI_28_2_files = list(
-    filter(lambda x: (x[0:9] == 'MOLI_28_2' and x[-4:] == '.csv'), files))
-
-MOLI_28_1_list = []
-for file in MOLI_28_1_files:
-    tmp = pd.read_csv(MOLI_28_path + file, header=8)
-    MOLI_28_1_list.append(tmp)
-MOLI_28_1_list = sorted(MOLI_28_1_list, key=lambda k: k['Date'][0])
-
-MOLI_28_2_list = []
-for file in MOLI_28_2_files:
-    tmp = pd.read_csv(MOLI_28_path + file, header=8)
-    MOLI_28_2_list.append(tmp)
-MOLI_28_2_list = sorted(MOLI_28_2_list, key=lambda k: k['Date'][0])
-
-dataset_MOLI_28_1 = pd.concat(
-    MOLI_28_1_list, axis=0, join='outer', ignore_index=True)
-for data in range(len(dataset_MOLI_28_1)):
-    dataset_MOLI_28_1.loc[data, 'Cycle'] = data
-
-dataset_MOLI_28_1['AH-OUT-NOMINAL'] = dataset_MOLI_28_1.apply(
-    lambda x: x['AH-OUT'] / dataset_MOLI_28_1.loc[0, 'AH-OUT'], axis=1)
-
-dataset_MOLI_28_2 = pd.concat(
-    MOLI_28_2_list, axis=0, join='outer', ignore_index=True)
-for data in range(len(dataset_MOLI_28_2)):
-    dataset_MOLI_28_2.loc[data, 'Cycle'] = data
-
-dataset_MOLI_28_2['AH-OUT-NOMINAL'] = dataset_MOLI_28_2.apply(
-    lambda x: x['AH-OUT'] / dataset_MOLI_28_2.loc[0, 'AH-OUT'], axis=1)
-
-line_MOLI_28_1 = go.Scatter(x=dataset_MOLI_28_1['Cycle'],
-                            y=dataset_MOLI_28_1['AH-OUT-NOMINAL'],
-                            name='MOLI_28_1',
-                            marker_color='rgb(0,0,255)')
-
-line_MOLI_28_2 = go.Scatter(x=dataset_MOLI_28_2['Cycle'],
-                            y=dataset_MOLI_28_2['AH-OUT-NOMINAL'],
-                            name='MOLI_28_2',
-                            marker_color='rgb(0,0,255)',
-                            line=dict(dash='dash'))
-
-# ====================MOLI_42====================
-MOLI_42_path = 'Cycle_Data/MOLI_42/'
-files = os.listdir(MOLI_42_path)
-
-MOLI_42_1_files = list(
-    filter(lambda x: (x[0:9] == 'MOLI_42_1' and x[-4:] == '.csv'), files))
-MOLI_42_2_files = list(
-    filter(lambda x: (x[0:9] == 'MOLI_42_2' and x[-4:] == '.csv'), files))
-
-MOLI_42_1_list = []
-for file in MOLI_42_1_files:
-    tmp = pd.read_csv(MOLI_42_path + file, header=8)
-    MOLI_42_1_list.append(tmp)
-MOLI_42_1_list = sorted(MOLI_42_1_list, key=lambda k: k['Date'][0])
-
-MOLI_42_2_list = []
-for file in MOLI_42_2_files:
-    tmp = pd.read_csv(MOLI_42_path + file, header=8)
-    MOLI_42_2_list.append(tmp)
-MOLI_42_2_list = sorted(MOLI_42_2_list, key=lambda k: k['Date'][0])
-
-dataset_MOLI_42_1 = pd.concat(
-    MOLI_42_1_list, axis=0, join='outer', ignore_index=True)
-for data in range(len(dataset_MOLI_42_1)):
-    dataset_MOLI_42_1.loc[data, 'Cycle'] = data
-
-dataset_MOLI_42_1['AH-OUT-NOMINAL'] = dataset_MOLI_42_1.apply(
-    lambda x: x['AH-OUT'] / dataset_MOLI_42_1.loc[0, 'AH-OUT'], axis=1)
-
-dataset_MOLI_42_2 = pd.concat(
-    MOLI_42_2_list, axis=0, join='outer', ignore_index=True)
-for data in range(len(dataset_MOLI_42_2)):
-    dataset_MOLI_42_2.loc[data, 'Cycle'] = data
-
-dataset_MOLI_42_2['AH-OUT-NOMINAL'] = dataset_MOLI_42_2.apply(
-    lambda x: x['AH-OUT'] / dataset_MOLI_42_2.loc[0, 'AH-OUT'], axis=1)
-
-line_MOLI_42_1 = go.Scatter(x=dataset_MOLI_42_1['Cycle'],
-                            y=dataset_MOLI_42_1['AH-OUT-NOMINAL'],
-                            name='MOLI_42_1',
-                            marker_color='rgb(255,0,255)')
-
-line_MOLI_42_2 = go.Scatter(x=dataset_MOLI_42_2['Cycle'],
-                            y=dataset_MOLI_42_2['AH-OUT-NOMINAL'],
-                            name='MOLI_42_2',
-                            marker_color='rgb(255,0,255)',
-                            line=dict(dash='dash'))
-
-# ====================Plot codes====================
-
-# Combine the curves to one figure
-fig = go.Figure([line_CHAM_26_1,
-                 line_CHAM_26_2,
-
-                 line_CHAM_32_1,
-                 line_CHAM_32_2,
-
-                 line_MOLI_28_1,
-                 line_MOLI_28_2,
-
-                 line_MOLI_42_1,
-                 line_MOLI_42_2
-                 ])
-
-# Config the layout
-fig.update_layout(
-    title='Battery AH-OUT-NOMINAL/Cycle Data',
-    xaxis_title='Cycle',
-    yaxis_title='AH-OUT-NOMINAL',
-    hovermode='x'
-)
-
-fig.show()
+    fig.show()
