@@ -23,7 +23,7 @@ fig = go.Figure([amp_line,volt_line])
 fig.update_layout(
     title = 'CHAM_26 Battery 1 and Battery 2 Amps/Rec# Data',
     xaxis_title = 'Rec#',
-    yaxis_title = 'Amps (Ah)、Volts (V)',
+    yaxis_title = 'Amps (Ah),Volts (V)',
     hovermode='x unified'
 )
 
