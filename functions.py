@@ -1,6 +1,6 @@
 import pandas as pd
 
-def get_internal_resistance(data, cycle_number):
+def get_resistance_percycle(data, cycle_number):
     df = data
     cycle = cycle_number
 
@@ -15,7 +15,25 @@ def get_internal_resistance(data, cycle_number):
     internal_resistance_2 = (point4.iat[0,8] - point3.iat[0,8]) / (point4.iat[0,7] - point3.iat[0,7])
     
     output = pd.DataFrame([[cycle, internal_resistance_1], [cycle, internal_resistance_2]], columns=['Cycle', 'Internal_resistance'])
+    # output = {'Cycle':cycle, 'Internal_resistance':(internal_resistance_1 + internal_resistance_2)/2}
+    return output
 
-    print(internal_resistance_1,internal_resistance_2)
+def get_resistance_data(data):
+    df = data
+    full_cycle = df['Cyc#'].max()
+
+    output = pd.DataFrame(columns=['Cycle', 'Internal_resistance'])
+
+    for i in range(full_cycle-1):
+        calculated_data = get_resistance_percycle(df,i + 1)
+        output = pd.concat([output, calculated_data], ignore_index = True)
 
     return output
+
+# ====================MAIN====================
+if __name__ == "__main__":
+
+    df=pd.read_csv('Cycle_Data_2/ZW_CHAM_M_2000cycles_1.csv', header=1)
+    fig = get_resistance_data(df)
+
+    print(fig)
