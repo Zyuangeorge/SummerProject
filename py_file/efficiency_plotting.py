@@ -5,8 +5,8 @@ import random
 import pandas as pd
 import plotly.graph_objects as go
 import statsmodels.api as sm
-# from sklearn.linear_model import LinearRegressio
 import numpy as np
+import plotly.express as px
 
 def create_lines(file_path):
     '''Plot the nominal curve, file structure should be folder-scv'''
