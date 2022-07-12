@@ -4,6 +4,9 @@ import operator
 import random
 import pandas as pd
 import plotly.graph_objects as go
+import statsmodels.api as sm
+from sklearn.linear_model import LinearRegressio
+import numpy as np
 
 def create_lines(file_path):
     '''Plot the nominal curve, file structure should be folder-scv'''
@@ -65,7 +68,13 @@ def create_lines(file_path):
     
     dataset_battery1['TYPE'] = line_name
     dataset_battery2['TYPE'] = line_name
+
+    dataset_battery1['trendline'] = sm.OLS(dataset_battery1['EFFICIENCY'],sm.add_constant(dataset_battery1['Cycle'])).fit().fittedvalues
     
+    """ # regression
+    reg = LinearRegression().fit(np.vstack(dataset_battery1['EFFICIENCY']), Y)
+    dataset_battery1['trendline'] = reg.predict(np.vstack(dataset_battery1['Cycle'])) """
+
     # Plot the curves
     line_battery1 = go.Scatter(x=dataset_battery1['Cycle'],
                                 y=dataset_battery1['EFFICIENCY'],
@@ -77,8 +86,10 @@ def create_lines(file_path):
                                 name= line_name + '_2',
                                 marker_color = color,
                                 line=dict(dash='dash'))
-    
-    line_list = [line_battery1, line_battery2]
+
+    trendline1 = go.Scatter(name=line_name + '_1' + 'Trendline', x=dataset_battery1['Cycle'], y=dataset_battery1['trendline'], mode='lines')
+
+    line_list = [line_battery1, line_battery2, trendline1]
     
     return line_list
 
