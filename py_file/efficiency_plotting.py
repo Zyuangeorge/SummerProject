@@ -8,6 +8,16 @@ import statsmodels.api as sm
 import numpy as np
 import plotly.express as px
 
+""" def linear_OLS(x_arr,y_arr):
+    '''https://blog.csdn.net/qq_18668137/article/details/105116319'''
+    x_avg = x_arr.mean()
+    y_avg = y_arr.mean()
+    s_xy = (x-x_avg)*(y-y_avg).T
+    s_x = (x-x_avg)*(x-x_avg).T
+    beta_1 = s_xy.sum()/s_x.sum()
+    beta_0 = y_avg-beta_1*x_avg
+    return beta_1,beta_0 """
+
 def create_lines(file_path):
     '''Plot the nominal curve, file structure should be folder-scv'''
     # File lists
@@ -68,13 +78,14 @@ def create_lines(file_path):
     
     dataset_battery1['TYPE'] = line_name
     dataset_battery2['TYPE'] = line_name
-
-    dataset_battery1['trendline'] = sm.OLS(dataset_battery1['EFFICIENCY'],sm.add_constant(dataset_battery1['Cycle'])).fit().fittedvalues
     
-    """ # regression
-    reg = LinearRegression().fit(np.vstack(dataset_battery1['EFFICIENCY']), Y)
-    dataset_battery1['trendline'] = reg.predict(np.vstack(dataset_battery1['Cycle'])) """
+    efficiency = dataset_battery1['EFFICIENCY']
+    cycle = dataset_battery1['Cycle']
+    cycle = sm.add_constant(cycle)
 
+    trendline_model = sm.OLS(efficiency,cycle).fit()
+    print(trendline_model.summary())
+    
     # Plot the curves
     line_battery1 = go.Scatter(x=dataset_battery1['Cycle'],
                                 y=dataset_battery1['EFFICIENCY'],
@@ -87,9 +98,7 @@ def create_lines(file_path):
                                 marker_color = color,
                                 line=dict(dash='dash'))
 
-    trendline1 = go.Scatter(name=line_name + '_1' + 'Trendline', x=dataset_battery1['Cycle'], y=dataset_battery1['trendline'], mode='lines',marker_color = color)
-
-    line_list = [line_battery1, line_battery2, trendline1]
+    line_list = [line_battery1, line_battery2]
     
     return line_list
 
