@@ -5,7 +5,7 @@ import random
 import pandas as pd
 import plotly.graph_objects as go
 import statsmodels.api as sm
-from sklearn.linear_model import LinearRegressio
+# from sklearn.linear_model import LinearRegressio
 import numpy as np
 
 def create_lines(file_path):
@@ -87,7 +87,7 @@ def create_lines(file_path):
                                 marker_color = color,
                                 line=dict(dash='dash'))
 
-    trendline1 = go.Scatter(name=line_name + '_1' + 'Trendline', x=dataset_battery1['Cycle'], y=dataset_battery1['trendline'], mode='lines')
+    trendline1 = go.Scatter(name=line_name + '_1' + 'Trendline', x=dataset_battery1['Cycle'], y=dataset_battery1['trendline'], mode='lines',marker_color = color)
 
     line_list = [line_battery1, line_battery2, trendline1]
     
