@@ -12,10 +12,12 @@ def get_resistance_per_cycle(data, cycle_number):
     point1 = df[list(point2.index)[0]-1:list(point2.index)[0]]
     point4 = df[list(point3.index)[0]+1:list(point3.index)[0]+2]
 
-    internal_resistance_1 = (point2.iat[0,8] - point1.iat[0,8]) / (point2.iat[0,7] - point1.iat[0,7])
-    internal_resistance_2 = (point4.iat[0,8] - point3.iat[0,8]) / (point4.iat[0,7] - point3.iat[0,7])
+    internal_resistance_1 = (point2.iat[0,7] - point1.iat[0,7]) / (point2.iat[0,6] - point1.iat[0,6])
+    internal_resistance_2 = (point4.iat[0,7] - point3.iat[0,7]) / (point4.iat[0,6] - point3.iat[0,6])
     
-    output = pd.DataFrame([[cycle, internal_resistance_1], [cycle, internal_resistance_2]], columns=['Cycle', 'Internal_resistance'])
+    internal_resistance_total = (internal_resistance_1 + internal_resistance_2)/2
+    output = pd.DataFrame([[cycle, internal_resistance_total]], columns=['Cycle', 'Internal_resistance'])
+    #output = pd.DataFrame([[cycle, internal_resistance_1], [cycle, internal_resistance_2]], columns=['Cycle', 'Internal_resistance'])
     # output = {'Cycle':cycle, 'Internal_resistance':(internal_resistance_1 + internal_resistance_2)/2}
     return output
 
@@ -60,6 +62,7 @@ if __name__ == "__main__":
     fig = get_resistance_data(df) 
     print(fig) """
 
-    fig = plot_curves('Cycle_Data_2/ZW_CHAM_M_2000cycles_1.csv')
+    #fig = plot_curves('Cycle_Data_2/ZW_CHAM_M_2000cycles_1.csv')
+    fig = plot_curves('Cycle_Data_2/ZW_Cham200cycles_1C_repeat.013.csv')
     
     fig.show()

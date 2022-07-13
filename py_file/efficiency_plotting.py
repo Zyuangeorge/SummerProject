@@ -79,11 +79,11 @@ def create_lines(file_path):
     dataset_battery1['TYPE'] = line_name
     dataset_battery2['TYPE'] = line_name
     
-    efficiency = dataset_battery1['EFFICIENCY']
-    cycle = dataset_battery1['Cycle']
+    efficiency = dataset_battery1['EFFICIENCY'].tolist()
+    cycle = dataset_battery1['Cycle'].tolist()
     cycle = sm.add_constant(cycle)
 
-    trendline_model = sm.OLS(efficiency,cycle).fit()
+    trendline_model = sm.OLS(efficiency,cycle).fit() # Linear regression
     print(trendline_model.summary())
     
     # Plot the curves
