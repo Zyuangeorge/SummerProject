@@ -15,30 +15,27 @@ def get_resistance_per_cycle(data, cycle_number):
     internal_resistance_1 = (point2.iat[0,7] - point1.iat[0,7]) / (point2.iat[0,6] - point1.iat[0,6])
     internal_resistance_2 = (point4.iat[0,7] - point3.iat[0,7]) / (point4.iat[0,6] - point3.iat[0,6])
     
-    output_resistance_1 = pd.DataFrame([[cycle, internal_resistance_1]], columns=['Cycle', 'Internal_resistance'])
-    output_resistance_2 = pd.DataFrame([[cycle, internal_resistance_2]], columns=['Cycle', 'Internal_resistance'])
+    output_resistance = pd.DataFrame([[cycle, internal_resistance_1,internal_resistance_2]], columns=['Cycle', 'Internal_resistance_1', 'Internal_resistance_2'])
 
-    return output_resistance_1, output_resistance_2
+    return output_resistance
 
 def create_resistance_lines(data):
     df = data
     full_cycle_number = df['Cyc#'].max()
 
-    output_fullcycle_1 = pd.DataFrame(columns=['Cycle', 'Internal_resistance'])
-    output_fullcycle_2 = pd.DataFrame(columns=['Cycle', 'Internal_resistance'])
+    output_fullcycle = pd.DataFrame(columns=['Cycle', 'Internal_resistance_1', 'Internal_resistance_2'])
 
     for i in range(full_cycle_number - 1):
-        calculated_data_1,calculated_data_2 = get_resistance_per_cycle(df,i + 1)
+        calculated_data = get_resistance_per_cycle(df,i + 1)
 
-        output_fullcycle_1 = pd.concat([output_fullcycle_1, calculated_data_1], ignore_index = True)
-        output_fullcycle_2 = pd.concat([output_fullcycle_2, calculated_data_2], ignore_index = True)
+        output_fullcycle = pd.concat([output_fullcycle, calculated_data], ignore_index = True)
 
-    internal_resistance_curve_1 = go.Scatter(x = output_fullcycle_1['Cycle'],
-                                             y = output_fullcycle_1['Internal_resistance'],
+    internal_resistance_curve_1 = go.Scatter(x = output_fullcycle['Cycle'],
+                                             y = output_fullcycle['Internal_resistance_1'],
                                              name= 'Internal resistance_1')
 
-    internal_resistance_curve_2 = go.Scatter(x = output_fullcycle_2['Cycle'],
-                                             y = output_fullcycle_2['Internal_resistance'],
+    internal_resistance_curve_2 = go.Scatter(x = output_fullcycle['Cycle'],
+                                             y = output_fullcycle['Internal_resistance_2'],
                                              name= 'Internal resistance_2')
 
     return [internal_resistance_curve_1, internal_resistance_curve_2]
