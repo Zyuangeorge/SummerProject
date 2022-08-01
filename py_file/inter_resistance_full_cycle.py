@@ -118,6 +118,6 @@ def plot_graph(folder_path):
 # ====================MAIN====================
 if __name__ == "__main__":
 
-    #plot_graph('Full_Test_Data/CHAM_26/')
-    plot_graph('Full_Test_Data/MOLI_28/')
-    #plot_graph('Full_Test_Data/MOLI_42/')
+    # plot_graph('Full_Test_Data/CHAM_26/')
+    # plot_graph('Full_Test_Data/MOLI_28/')
+    plot_graph('Full_Test_Data/MOLI_42/')
