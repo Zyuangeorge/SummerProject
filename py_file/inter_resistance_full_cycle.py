@@ -76,13 +76,38 @@ def plot_graph(root_path):
     return fig
 
 def convert_to_timestamp(dateStr):
-    datetimeObj = datetime.datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S")
-    timeStamp = int(time.mktime(datetimeObj.timetuple()))
-    return timeStamp
+    # 12/09/2020 17:51:05
+    return datetime.datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S").timestamp()
+
+def create_dataset(folder_path):
+    # File list
+    file_list = os.listdir(folder_path)
+    battery_1_data = []
+    battery_2_data = []
+
+    folder_name = folder_path
+
+    # Filter out other files
+    battery_1_file_namelist = list(
+        filter(lambda x: (x[7:10] == '_1_' and x[-4:] == '.csv'), file_list))
+    battery_2_file_namelist = list(
+        filter(lambda x: (x[7:10] == '_2_' and x[-4:] == '.csv'), file_list))
+    
+    for file_name in battery_1_file_namelist:
+        tmp = pd.read_csv(folder_name + file_name, header=2)
+        battery_1_data.append(tmp)
+    
+    for file_name in battery_2_file_namelist:
+        tmp = pd.read_csv(folder_name + file_name, header=2)
+        battery_2_data.append(tmp)
+
+    battery_1_data = sorted(battery_1_data, key = lambda date:convert_to_timestamp(date['DPt Time'][0]))
 
 # ====================MAIN====================
 if __name__ == "__main__":
 
-    fig = plot_graph('Cycle_Data_2/ZW_Cham200cycles_1C_repeat.013.csv')
+    # fig = plot_graph('Cycle_Data_2/ZW_Cham200cycles_1C_repeat.013.csv')
+    
+    # fig.show()
 
-    fig.show()
+    create_dataset('Full_Test_Data/CHAM_26/')
