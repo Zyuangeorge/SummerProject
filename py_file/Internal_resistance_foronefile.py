@@ -11,6 +11,7 @@ def get_resistance_per_cycle(data, cycle_number):
 
     point2 = battery1_1_filtered.head(1)
     point3 = battery1_1_filtered.tail(1)
+    
     point1 = df[list(point2.index)[0]-1:list(point2.index)[0]]
     point4 = df[list(point3.index)[0]+1:list(point3.index)[0]+2]
 
