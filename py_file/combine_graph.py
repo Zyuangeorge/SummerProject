@@ -92,7 +92,7 @@ def create_lines(battery_data_set_for_resistance, battery_data_set_for_efficienc
     efficiency__capacitance_data_full_cycle = calculate_capacitance_efficiency(
         battery_data_set_for_efficiency_capacitance)
 
-    # Reset Cyc# and Cycle value
+    # Reset Cyc# value
     internal_resistance_data_full_cycle['Cyc#'] = list(
         internal_resistance_data_full_cycle.index)
 
