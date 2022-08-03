@@ -257,3 +257,4 @@ if __name__ == "__main__":
 
     # plot_graph('Full_Test_Data/MOLI_28/', 'Cycle_Data/MOLI_28/')
     plot_graph('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
+    # plot_graph('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
