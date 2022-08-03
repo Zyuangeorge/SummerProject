@@ -213,7 +213,7 @@ def plot_graph(folder_path_resistance, folder_path_eff_cap):
         title='Battery Characteristics/Cycle Data',
         xaxis_title='Cycle',
         yaxis_title='Nominal value',
-        hovermode='x unified',
+        hovermode='x',
         yaxis_range=[0.5, 1.2]
     )
 
