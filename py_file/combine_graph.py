@@ -128,11 +128,24 @@ def create_dataset_for_resistance(folder_path):
 
     folder_name = folder_path
 
-    # Filter out other files
-    battery_1_file_namelist = list(
-        filter(lambda x: (x[7:10] == '_1_' and x[-4:] == '.csv'), file_list))
-    battery_2_file_namelist = list(
-        filter(lambda x: (x[7:10] == '_2_' and x[-4:] == '.csv'), file_list))
+    if folder_name[-7:] == 'DLG_30/':
+        # Filter for DLG_30
+        battery_1_file_namelist = list(
+            filter(lambda x: (x[6:9] == '_1_' and x[-4:] == '.csv'), file_list))
+        battery_2_file_namelist = list(
+            filter(lambda x: (x[6:9] == '_2_' and x[-4:] == '.csv'), file_list))
+    elif folder_name[-9:] == 'DMEGC_26/':
+        # Filter for DMEGC_26
+        battery_1_file_namelist = list(
+            filter(lambda x: (x[8:11] == '_1_' and x[-4:] == '.csv'), file_list))
+        battery_2_file_namelist = list(
+            filter(lambda x: (x[8:11] == '_2_' and x[-4:] == '.csv'), file_list))
+    else:
+        # Filter out other files
+        battery_1_file_namelist = list(
+            filter(lambda x: (x[7:10] == '_1_' and x[-4:] == '.csv'), file_list))
+        battery_2_file_namelist = list(
+            filter(lambda x: (x[7:10] == '_2_' and x[-4:] == '.csv'), file_list))
 
     # Read the file in the file list
     for file_name in battery_1_file_namelist:
@@ -160,11 +173,24 @@ def create_dataset_for_efficiency_and_capacitance(folder_path):
 
     folder_name = folder_path
 
-    # Filter out other files
-    battery_1_file_namelist = list(
-        filter(lambda x: (x[7:10] == '_1_' and x[-4:] == '.csv'), file_list))
-    battery_2_file_namelist = list(
-        filter(lambda x: (x[7:10] == '_2_' and x[-4:] == '.csv'), file_list))
+    if folder_name[-7:] == 'DLG_30/':
+        # Filter for DLG_30
+        battery_1_file_namelist = list(
+            filter(lambda x: (x[6:9] == '_1_' and x[-4:] == '.csv'), file_list))
+        battery_2_file_namelist = list(
+            filter(lambda x: (x[6:9] == '_2_' and x[-4:] == '.csv'), file_list))
+    elif folder_name[-9:] == 'DMEGC_26/':
+        # Filter for DMEGC_26
+        battery_1_file_namelist = list(
+            filter(lambda x: (x[8:11] == '_1_' and x[-4:] == '.csv'), file_list))
+        battery_2_file_namelist = list(
+            filter(lambda x: (x[8:11] == '_2_' and x[-4:] == '.csv'), file_list))
+    else:
+        # Filter out other files
+        battery_1_file_namelist = list(
+            filter(lambda x: (x[7:10] == '_1_' and x[-4:] == '.csv'), file_list))
+        battery_2_file_namelist = list(
+            filter(lambda x: (x[7:10] == '_2_' and x[-4:] == '.csv'), file_list))
 
     # Read the file in the file list
     for file_name in battery_1_file_namelist:
@@ -195,6 +221,12 @@ def create_dataset_for_efficiency_and_capacitance(folder_path):
 def plot_graph(folder_path_resistance, folder_path_eff_cap):
 
     folder_name = folder_path_resistance
+    if folder_name[-7:] == 'DLG_30/':
+        line_name = 'DLG_30'
+    elif folder_name[-9:] == 'DMEGC_26/':
+        line_name = 'DMEGC_26'
+    else:
+        line_name = folder_name[15:22]
 
     battery_data_resistance_1, battery_data_resistance_2 = create_dataset_for_resistance(
         folder_path_resistance)
@@ -202,9 +234,9 @@ def plot_graph(folder_path_resistance, folder_path_eff_cap):
         folder_path_eff_cap)
 
     battery_1_line_1, battery_1_line_2, battery_1_line_3, battery_1_line_4 = create_lines(
-        battery_data_resistance_1, battery_data_eff_cap_1, folder_name[15:22])
+        battery_data_resistance_1, battery_data_eff_cap_1, line_name + '_1')
     battery_2_line_1, battery_2_line_2, battery_2_line_3, battery_2_line_4 = create_lines(
-        battery_data_resistance_2, battery_data_eff_cap_2, folder_name[15:22] + '_2')
+        battery_data_resistance_2, battery_data_eff_cap_2, line_name + '_2')
 
     fig = go.Figure([battery_1_line_1, battery_1_line_2, battery_1_line_3, battery_1_line_4,
                      battery_2_line_1, battery_2_line_2, battery_2_line_3, battery_2_line_4])
@@ -223,4 +255,5 @@ def plot_graph(folder_path_resistance, folder_path_eff_cap):
 # ====================MAIN====================
 if __name__ == "__main__":
 
-    plot_graph('Full_Test_Data/MOLI_28/', 'Cycle_Data/MOLI_28/')
+    # plot_graph('Full_Test_Data/MOLI_28/', 'Cycle_Data/MOLI_28/')
+    plot_graph('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
