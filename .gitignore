@@ -89,9 +89,4 @@ Full_Test_Data/DLG_30/DLG_30_2_1600.csv
 Full_Test_Data/DLG_30/DLG_30_2_1800.csv
 Full_Test_Data/DLG_30/DLG_30_2_2000.csv
 Full_Test_Data/DLG_30/DLG_30_2_2200.csv
-.idea/.gitignore
-.idea/misc.xml
-.idea/modules.xml
-.idea/SummerProject.iml
-.idea/vcs.xml
-.idea/inspectionProfiles/profiles_settings.xml
+.idea/
