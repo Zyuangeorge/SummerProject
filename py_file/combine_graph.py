@@ -236,7 +236,7 @@ def combine_dataset(battery_data_resistance, battery_data_eff_cap, battery_name)
                                    'Internal_resistance_1_nominal', 'Internal_resistance_2_nominal'])
     eff_cap_data = pd.DataFrame(battery_data_eff_cap, columns=[
                                 'Cycle', 'AH-OUT-NOMINAL', 'EFFICIENCY'])
-    eff_cap_data.rename(columns={'AH-OUT-NOMINAL': 'Capacity'})
+    eff_cap_data = eff_cap_data.rename(columns={'AH-OUT-NOMINAL': 'Capacity'})
 
     combined_data = pd.concat(
         [eff_cap_data, resistance_data], axis=1)
@@ -322,6 +322,7 @@ if __name__ == "__main__":
 
     # fig = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
     # fig = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
-    # fig = plot_graph_px('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
-    fig = plot_graph_px('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
+    # fig = plot_graph_px('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
+    fig = plot_graph_px('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
+    
     fig.show()
