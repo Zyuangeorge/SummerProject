@@ -303,15 +303,14 @@ def plot_graph_px(folder_path_resistance, folder_path_eff_cap):
     battery_data_2 = combine_dataset(
         battery_data_resistance_2, battery_data_eff_cap_2, battery_name + '_2')
 
-    final_data = pd.concat([battery_data_1,battery_data_2], ignore_index=True)
+    final_data = pd.concat([battery_data_1, battery_data_2], ignore_index=True)
 
     fig = px.scatter(final_data, x='Cycle', y='Nominal Value',
-                  color='Data_type', title='Nominal Value/Cycle Curves', trendline='lowess', symbol='Battery_name')
+                     color='Data_type', title='Nominal Value/Cycle Curves', trendline='lowess', symbol='Battery_name', category_orders={'Battery_name': [battery_name + '_1', battery_name + '_2']})
 
     fig.data = [t for t in fig.data if t.mode == 'lines']
 
     # fig.update_layout(yaxis_range=[0.5, 1.2])
-
     fig.update_traces(showlegend=True)
 
     return fig
@@ -324,5 +323,5 @@ if __name__ == "__main__":
     # fig = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
     # fig = plot_graph_px('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
     fig = plot_graph_px('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
-    
+
     fig.show()
