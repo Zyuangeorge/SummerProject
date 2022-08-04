@@ -2,6 +2,7 @@ import os
 import datetime
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
 
 
 def calculate_internal_resistance(data):
@@ -73,60 +74,39 @@ def calculate_nominal_resistance(data):
     return resistance_data
 
 
-def create_lines(battery_data_set_for_resistance, battery_data_set_for_efficiency_capacitance, battery_name):
+def convert_to_timestamp(dateStr):
+    return datetime.datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S").timestamp()
 
+
+def combine_internal_resistance_data(battery_data):
     internal_resistance_data_full_cycle = []
 
     # Create internal resistance data
-    for data in battery_data_set_for_resistance:
+    for data in battery_data:
         internal_resistance_data = calculate_internal_resistance(data)
         internal_resistance_data_full_cycle.append(internal_resistance_data)
 
     internal_resistance_data_full_cycle = pd.concat(
         internal_resistance_data_full_cycle, axis=0, join='outer', ignore_index=True)
 
-    internal_resistance_data_full_cycle = calculate_nominal_resistance(
-        internal_resistance_data_full_cycle)
-
-    # Create efficiency and capacitance data
-    efficiency__capacitance_data_full_cycle = calculate_capacitance_efficiency(
-        battery_data_set_for_efficiency_capacitance)
-
     # Reset Cyc# value
     internal_resistance_data_full_cycle['Cyc#'] = list(
         internal_resistance_data_full_cycle.index)
 
-    # Create 4 kinds of lines
-    line__resistance_1 = go.Scatter(x=internal_resistance_data_full_cycle['Cyc#'],
-                                    y=internal_resistance_data_full_cycle['Internal_resistance_1_nominal'],
-                                    name=battery_name + '_' + 'Internal resistance_1')
-
-    line__resistance_2 = go.Scatter(x=internal_resistance_data_full_cycle['Cyc#'],
-                                    y=internal_resistance_data_full_cycle['Internal_resistance_2_nominal'],
-                                    name=battery_name + '_' + 'Internal resistance_2')
-
-    line_capacitance = go.Scatter(x=efficiency__capacitance_data_full_cycle['Cycle'],
-                                  y=efficiency__capacitance_data_full_cycle['AH-OUT-NOMINAL'],
-                                  name=battery_name + '_' + 'Capacitance')
-
-    line_efficiency = go.Scatter(x=efficiency__capacitance_data_full_cycle['Cycle'],
-                                 y=efficiency__capacitance_data_full_cycle['EFFICIENCY'],
-                                 name=battery_name + '_' + 'Efficiency')
-
-    return line__resistance_1, line__resistance_2, line_capacitance, line_efficiency
+    return internal_resistance_data_full_cycle
 
 
-def convert_to_timestamp(dateStr):
-    return datetime.datetime.strptime(dateStr, "%m/%d/%Y %H:%M:%S").timestamp()
+def combine_eff_cap_data(battery_data):
+    # Merge the data in the list to one dataframe variable
+    battery_data = pd.concat(
+        battery_data, axis=0, join='outer', ignore_index=True)
+
+    battery_data['Cycle'] = list(battery_data.index)
+
+    return battery_data
 
 
-def create_dataset_for_resistance(folder_path):
-    # File list
-    file_list = os.listdir(folder_path)
-    battery_1_data = []
-    battery_2_data = []
-
-    folder_name = folder_path
+def get_file_name_list(folder_name, file_list):
 
     if folder_name[-7:] == 'DLG_30/':
         # Filter for DLG_30
@@ -146,6 +126,20 @@ def create_dataset_for_resistance(folder_path):
             filter(lambda x: (x[7:10] == '_1_' and x[-4:] == '.csv'), file_list))
         battery_2_file_namelist = list(
             filter(lambda x: (x[7:10] == '_2_' and x[-4:] == '.csv'), file_list))
+
+    return battery_1_file_namelist, battery_2_file_namelist
+
+
+def create_dataset_for_resistance(folder_path):
+    # File list
+    file_list = os.listdir(folder_path)
+    battery_1_data = []
+    battery_2_data = []
+
+    folder_name = folder_path
+
+    battery_1_file_namelist, battery_2_file_namelist = get_file_name_list(
+        folder_name, file_list)
 
     # Read the file in the file list
     for file_name in battery_1_file_namelist:
@@ -162,7 +156,16 @@ def create_dataset_for_resistance(folder_path):
     battery_2_data = sorted(
         battery_2_data, key=lambda date: convert_to_timestamp(date['DPt Time'][0]))
 
-    return battery_1_data, battery_2_data
+    battery_1_data = combine_internal_resistance_data(battery_1_data)
+    battery_2_data = combine_internal_resistance_data(battery_2_data)
+
+    # Create nominal resistance data
+    internal_resistance_data__1 = calculate_nominal_resistance(
+        battery_1_data)
+    internal_resistance_data__2 = calculate_nominal_resistance(
+        battery_2_data)
+
+    return internal_resistance_data__1, internal_resistance_data__2
 
 
 def create_dataset_for_efficiency_and_capacitance(folder_path):
@@ -173,24 +176,8 @@ def create_dataset_for_efficiency_and_capacitance(folder_path):
 
     folder_name = folder_path
 
-    if folder_name[-7:] == 'DLG_30/':
-        # Filter for DLG_30
-        battery_1_file_namelist = list(
-            filter(lambda x: (x[6:9] == '_1_' and x[-4:] == '.csv'), file_list))
-        battery_2_file_namelist = list(
-            filter(lambda x: (x[6:9] == '_2_' and x[-4:] == '.csv'), file_list))
-    elif folder_name[-9:] == 'DMEGC_26/':
-        # Filter for DMEGC_26
-        battery_1_file_namelist = list(
-            filter(lambda x: (x[8:11] == '_1_' and x[-4:] == '.csv'), file_list))
-        battery_2_file_namelist = list(
-            filter(lambda x: (x[8:11] == '_2_' and x[-4:] == '.csv'), file_list))
-    else:
-        # Filter out other files
-        battery_1_file_namelist = list(
-            filter(lambda x: (x[7:10] == '_1_' and x[-4:] == '.csv'), file_list))
-        battery_2_file_namelist = list(
-            filter(lambda x: (x[7:10] == '_2_' and x[-4:] == '.csv'), file_list))
+    battery_1_file_namelist, battery_2_file_namelist = get_file_name_list(
+        folder_name, file_list)
 
     # Read the file in the file list
     for file_name in battery_1_file_namelist:
@@ -206,19 +193,63 @@ def create_dataset_for_efficiency_and_capacitance(folder_path):
     battery_2_data = sorted(battery_2_data, key=lambda k: k['Date'][0])
 
     # Merge the data in the list to one dataframe variable
-    battery_1_data = pd.concat(
-        battery_1_data, axis=0, join='outer', ignore_index=True)
+    battery_1_data = combine_eff_cap_data(battery_1_data)
+    battery_2_data = combine_eff_cap_data(battery_2_data)
 
-    battery_2_data = pd.concat(
-        battery_2_data, axis=0, join='outer', ignore_index=True)
+    # Create efficiency and capacitance data
+    efficiency__capacitance_data_1 = calculate_capacitance_efficiency(
+        battery_1_data)
+    efficiency__capacitance_data_2 = calculate_capacitance_efficiency(
+        battery_2_data)
 
-    battery_1_data['Cycle'] = list(battery_1_data.index)
-    battery_2_data['Cycle'] = list(battery_2_data.index)
-
-    return battery_1_data, battery_2_data
+    return efficiency__capacitance_data_1, efficiency__capacitance_data_2
 
 
-def plot_graph(folder_path_resistance, folder_path_eff_cap):
+def create_lines(battery_data_set_for_resistance, battery_data_set_for_efficiency_capacitance, battery_name):
+
+    internal_resistance_data_full_cycle = battery_data_set_for_resistance
+    efficiency__capacitance_data_full_cycle = battery_data_set_for_efficiency_capacitance
+
+    # Create 4 kinds of lines
+    line__resistance_1 = go.Scatter(x=internal_resistance_data_full_cycle['Cyc#'],
+                                    y=internal_resistance_data_full_cycle['Internal_resistance_1_nominal'],
+                                    name=battery_name + '_' + 'Internal resistance_1')
+
+    line__resistance_2 = go.Scatter(x=internal_resistance_data_full_cycle['Cyc#'],
+                                    y=internal_resistance_data_full_cycle['Internal_resistance_2_nominal'],
+                                    name=battery_name + '_' + 'Internal resistance_2')
+
+    line_capacitance = go.Scatter(x=efficiency__capacitance_data_full_cycle['Cycle'],
+                                  y=efficiency__capacitance_data_full_cycle['AH-OUT-NOMINAL'],
+                                  name=battery_name + '_' + 'Capacity')
+
+    line_efficiency = go.Scatter(x=efficiency__capacitance_data_full_cycle['Cycle'],
+                                 y=efficiency__capacitance_data_full_cycle['EFFICIENCY'],
+                                 name=battery_name + '_' + 'Efficiency')
+
+    return line__resistance_1, line__resistance_2, line_capacitance, line_efficiency
+
+
+def combine_dataset(battery_data_resistance, battery_data_eff_cap, battery_name):
+
+    resistance_data = pd.DataFrame(battery_data_resistance, columns=[
+                                   'Internal_resistance_1_nominal', 'Internal_resistance_2_nominal'])
+    eff_cap_data = pd.DataFrame(battery_data_eff_cap, columns=[
+                                'Cycle', 'AH-OUT-NOMINAL', 'EFFICIENCY'])
+    eff_cap_data.rename(columns={'AH-OUT-NOMINAL': 'Capacity'})
+
+    combined_data = pd.concat(
+        [eff_cap_data, resistance_data], axis=1)
+
+    output_data = pd.melt(combined_data, id_vars='Cycle',
+                          var_name='Data_type', value_name='Nominal Value')
+
+    output_data['Battery_name'] = battery_name
+
+    return output_data
+
+
+def plot_graph_go(folder_path_resistance, folder_path_eff_cap):
 
     folder_name = folder_path_resistance
     if folder_name[-7:] == 'DLG_30/':
@@ -249,12 +280,48 @@ def plot_graph(folder_path_resistance, folder_path_eff_cap):
         yaxis_range=[0.5, 1.2]
     )
 
-    fig.show()
+    return fig
+
+
+def plot_graph_px(folder_path_resistance, folder_path_eff_cap):
+
+    folder_name = folder_path_resistance
+    if folder_name[-7:] == 'DLG_30/':
+        battery_name = 'DLG_30'
+    elif folder_name[-9:] == 'DMEGC_26/':
+        battery_name = 'DMEGC_26'
+    else:
+        battery_name = folder_name[15:22]
+
+    battery_data_resistance_1, battery_data_resistance_2 = create_dataset_for_resistance(
+        folder_path_resistance)
+    battery_data_eff_cap_1, battery_data_eff_cap_2 = create_dataset_for_efficiency_and_capacitance(
+        folder_path_eff_cap)
+
+    battery_data_1 = combine_dataset(
+        battery_data_resistance_1, battery_data_eff_cap_1, battery_name + '_1')
+    battery_data_2 = combine_dataset(
+        battery_data_resistance_2, battery_data_eff_cap_2, battery_name + '_2')
+
+    final_data = pd.concat([battery_data_1,battery_data_2], ignore_index=True)
+
+    fig = px.scatter(final_data, x='Cycle', y='Nominal Value',
+                  color='Data_type', title='Nominal Value/Cycle Curves', trendline='lowess', symbol='Battery_name')
+
+    fig.data = [t for t in fig.data if t.mode == 'lines']
+
+    # fig.update_layout(yaxis_range=[0.5, 1.2])
+
+    fig.update_traces(showlegend=True)
+
+    return fig
 
 
 # ====================MAIN====================
 if __name__ == "__main__":
 
-    # plot_graph('Full_Test_Data/MOLI_28/', 'Cycle_Data/MOLI_28/')
-    plot_graph('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
-    # plot_graph('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
+    # fig = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
+    # fig = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
+    # fig = plot_graph_px('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
+    fig = plot_graph_px('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
+    fig.show()
