@@ -55,8 +55,8 @@ def calculate_capacitance_efficiency(data):
     capacitance_efficiency_data['AH-OUT-NOMINAL'] = capacitance_efficiency_data.apply(
         lambda x: x['AH-OUT'] / data.loc[0, 'AH-OUT'], axis=1)
 
-    # Create a new series called efficiency
-    capacitance_efficiency_data['EFFICIENCY'] = capacitance_efficiency_data.apply(
+    # Create a new series called Efficiency
+    capacitance_efficiency_data['Efficiency'] = capacitance_efficiency_data.apply(
         lambda x: x['WH-OUT'] / x['WH-IN'], axis=1)
 
     return capacitance_efficiency_data
@@ -224,7 +224,7 @@ def create_lines(battery_data_set_for_resistance, battery_data_set_for_efficienc
                                   name=battery_name + '_' + 'Capacity')
 
     line_efficiency = go.Scatter(x=efficiency__capacitance_data_full_cycle['Cycle'],
-                                 y=efficiency__capacitance_data_full_cycle['EFFICIENCY'],
+                                 y=efficiency__capacitance_data_full_cycle['Efficiency'],
                                  name=battery_name + '_' + 'Efficiency')
 
     return line__resistance_1, line__resistance_2, line_capacitance, line_efficiency
@@ -235,7 +235,7 @@ def combine_dataset(battery_data_resistance, battery_data_eff_cap, battery_name)
     resistance_data = pd.DataFrame(battery_data_resistance, columns=[
                                    'Internal_resistance_1_nominal', 'Internal_resistance_2_nominal'])
     eff_cap_data = pd.DataFrame(battery_data_eff_cap, columns=[
-                                'Cycle', 'AH-OUT-NOMINAL', 'EFFICIENCY'])
+                                'Cycle', 'AH-OUT-NOMINAL', 'Efficiency'])
     eff_cap_data = eff_cap_data.rename(columns={'AH-OUT-NOMINAL': 'Capacity'})
 
     combined_data = pd.concat(
