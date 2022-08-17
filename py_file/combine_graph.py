@@ -319,9 +319,13 @@ def plot_graph_px(folder_path_resistance, folder_path_eff_cap):
 # ====================MAIN====================
 if __name__ == "__main__":
 
-    # fig = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
-    # fig = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
-    # fig = plot_graph_px('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
-    fig = plot_graph_px('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
+    fig1 = plot_graph_go('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
+    # fig1 = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
+    fig = plot_graph_px('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
+    #　fig = plot_graph_px('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
+
+    fig = plot_graph_px('Full_Test_Data/CHAM_26/', 'Cycle_Data/CHAM_26/')
+    fig1 = plot_graph_go('Full_Test_Data/CHAM_26/', 'Cycle_Data/CHAM_26/')
 
     fig.show()
+    fig1.show()
