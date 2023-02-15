@@ -8,16 +8,6 @@ import statsmodels.api as sm
 import numpy as np
 import plotly.express as px
 
-""" def linear_OLS(x_arr,y_arr):
-    '''https://blog.csdn.net/qq_18668137/article/details/105116319'''
-    x_avg = x_arr.mean()
-    y_avg = y_arr.mean()
-    s_xy = (x-x_avg)*(y-y_avg).T
-    s_x = (x-x_avg)*(x-x_avg).T
-    beta_1 = s_xy.sum()/s_x.sum()
-    beta_0 = y_avg-beta_1*x_avg
-    return beta_1,beta_0 """
-
 def create_lines(file_path):
     '''Plot the nominal curve, file structure should be folder-scv'''
     # File lists
