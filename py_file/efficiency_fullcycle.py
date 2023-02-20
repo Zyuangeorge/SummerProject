@@ -128,7 +128,6 @@ def plot_curves(root_path):
 
 # ====================MAIN====================
 if __name__ == "__main__":
-
     fig = plot_curves('Cycle_Data/')
 
     fig.show()

@@ -69,8 +69,6 @@ def plot_curves(root_path):
 
 # ====================MAIN====================
 if __name__ == "__main__":
-
-    #fig = plot_curves('Cycle_Data_2/ZW_CHAM_M_2000cycles_1.csv')
     fig = plot_curves('Cycle_Data_2/ZW_Cham200cycles_1C_repeat.013.csv')
-
+    
     fig.show()

@@ -318,14 +318,11 @@ def plot_graph_px(folder_path_resistance, folder_path_eff_cap):
 
 # ====================MAIN====================
 if __name__ == "__main__":
+    fig_go_DLG_30 = plot_graph_go('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
+    fig_px_DLG_30 = plot_graph_px('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
 
-    fig1 = plot_graph_go('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
-    # fig1 = plot_graph_go('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
-    fig = plot_graph_px('Full_Test_Data/DLG_30/', 'Cycle_Data/DLG_30/')
-    #　fig = plot_graph_px('Full_Test_Data/DMEGC_26/', 'Cycle_Data/DMEGC_26/')
-
-    fig = plot_graph_px('Full_Test_Data/CHAM_26/', 'Cycle_Data/CHAM_26/')
-    fig1 = plot_graph_go('Full_Test_Data/CHAM_26/', 'Cycle_Data/CHAM_26/')
-
-    fig.show()
-    fig1.show()
+    fig_go_CHAM_26 = plot_graph_go('Full_Test_Data/CHAM_26/', 'Cycle_Data/CHAM_26/')
+    fig_px_CHAM_26 = plot_graph_px('Full_Test_Data/CHAM_26/', 'Cycle_Data/CHAM_26/')
+    
+    fig_px_DLG_30.show()
+    fig_px_CHAM_26.show()
