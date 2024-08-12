@@ -1,2 +1,3 @@
 # SummerProject
-About battery...
+
+Data visualisation of battery data using plotly
